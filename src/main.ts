@@ -10,7 +10,7 @@ import { PpLoggingInterceptor } from './common/interceptors/logger.interceptor';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: new PpLogger(),
-    bufferLogs: true,
+    // bufferLogs: true,
   });
 
   // app.useLogger(new MyLogger(NestApplication.name));
