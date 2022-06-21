@@ -7,12 +7,9 @@ import {
 import { Observable } from 'rxjs';
 import { Request, Response } from 'express';
 import { map } from 'rxjs/operators';
-import { Reflector } from '@nestjs/core';
 
 @Injectable()
 export class ResponseTransformerInterceptor implements NestInterceptor {
-
-
   intercept(
     context: ExecutionContext,
     next: CallHandler<any>,
@@ -27,13 +24,17 @@ export class ResponseTransformerInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       map((data) => {
-        return {
-          status_code: response?.statusCode,
+        let responseData = {
+          statusCode: response?.statusCode,
           data,
-          message: '',
-          field_errors: [],
-          error: false,
         };
+
+        if (data?.paginate) {
+          (responseData.data = data.data),
+            (responseData['paginate'] = data.paginate);
+        }
+
+        return responseData;
       }),
     );
   }

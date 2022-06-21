@@ -16,6 +16,9 @@ export class MongoDBConfigService implements MongooseOptionsFactory {
       // maxPoolSize: 100,
       // minPoolSize: 10,
       // socketTimeoutMS: 3000,
+      // connectionName
     };
   }
 }
+
+//we can use multiple config service like this for different database uris
