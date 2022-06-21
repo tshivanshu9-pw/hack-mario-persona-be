@@ -5,7 +5,7 @@ import {
   CallHandler,
 } from '@nestjs/common';
 import { catchError, tap } from 'rxjs/operators';
-import { PpLoggerService } from 'src/boostrap/logger.service';
+import { PpLoggerService } from 'src/common/logger/logger.service';
 import logsConfig from 'src/config/logs.config';
 import { PpContextService } from 'src/core/services/context.service';
 @Injectable()

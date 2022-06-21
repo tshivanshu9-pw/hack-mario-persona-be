@@ -10,7 +10,7 @@ import { HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { BaseRepository } from './types/base-repo.interface';
 import { Document } from './types/document.interface';
 import { Params } from './types/params.interface';
-import { PpLoggerService } from 'src/boostrap/logger.service';
+import { PpLoggerService } from 'src/common/logger/logger.service';
 
 interface Provider {
   provide: string;

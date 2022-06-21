@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { UserUrls } from './internal-api.urls';
 import { Types } from 'mongoose';
 import { CreateUserData, UpdateUserData } from './dto/user.dto';
-import { PpLoggerService } from 'src/boostrap/logger.service';
+import { PpLoggerService } from 'src/common/logger/logger.service';
 import { HttpUtilService } from '../utils/http-util.service';
 
 @Injectable()

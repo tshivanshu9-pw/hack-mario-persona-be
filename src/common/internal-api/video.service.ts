@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PpLoggerService } from 'src/boostrap/logger.service';
+import { PpLoggerService } from 'src/common/logger/logger.service';
 import { HttpUtilService } from '../utils/http-util.service';
 import { VideoUrls } from './internal-api.urls';
 import { InternalApiVideoDetailParams } from './types';

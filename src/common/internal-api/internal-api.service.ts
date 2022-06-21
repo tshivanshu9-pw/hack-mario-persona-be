@@ -7,7 +7,7 @@ import {
   InternalApiIdDetailsParams,
   InternalApiPopulate,
 } from './types/index';
-import { PpLoggerService } from 'src/boostrap/logger.service';
+import { PpLoggerService } from 'src/common/logger/logger.service';
 import { HttpUtilService } from '../utils/http-util.service';
 
 @Injectable()

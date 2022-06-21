@@ -1,7 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { FilesUrls } from './internal-api.urls';
 import * as FormData from 'form-data';
-import { PpLoggerService } from 'src/boostrap/logger.service';
+import { PpLoggerService } from 'src/common/logger/logger.service';
 import { HttpUtilService } from '../utils/http-util.service';
 
 export class FileService {

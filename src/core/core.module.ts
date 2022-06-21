@@ -4,7 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 // import { ClientsModule } from '@nestjs/microservices';
 // import { KafkaConfigService } from 'src/config/kafka.config.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { PpLoggerService } from 'src/boostrap/logger.service';
+import { PpLoggerService } from 'src/common/logger/logger.service';
 import { HttpUtilService } from 'src/common/utils/http-util.service';
 import configuration from '../config/env.config';
 import { HttpConfigService } from 'src/config/http.config.service';

@@ -3,7 +3,7 @@ import { NestApplication, NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { ResponseTransformerInterceptor } from './common/interceptors/response.interceptor';
-import { PpLoggerService } from './boostrap/logger.service';
+import { PpLoggerService } from './common/logger/logger.service';
 import { PpContextService } from './core/services/context.service';
 import { PpLoggingInterceptor } from './common/interceptors/logger.interceptor';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PpLoggerService } from 'src/boostrap/logger.service';
+import { PpLoggerService } from 'src/common/logger/logger.service';
 import { createClient } from 'redis';
 import { ConfigService } from '@nestjs/config';
 import { RedisClientType } from '@redis/client';

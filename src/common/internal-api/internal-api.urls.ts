@@ -91,7 +91,7 @@ const LiveKitUrls = {
   getUserToken: '/user-mapping/get-token',
   closeRoom: '/admin-room/close-room',
   muteTrack: '/admin-room/mute-track',
-  muteTrackAll : '/admin-room/mute-all-track',
+  muteTrackAll: '/admin-room/mute-all-track',
   updatePermission: '/admin-room/update-permission',
 };
 export {

@@ -9,6 +9,10 @@ const developmentConfig = {
     timeout: parseInt(process.env.HTTP_TIMEOUT) || 30000,
     maxRedirects: parseInt(process.env.HTTP_MAX_REDIRECTS) || 5,
   },
+  INTERNAL_BASE_URL: process.env.INTERNAL_BASE_URL,
+  // redis: {
+  //   uri: 'redis://127.0.0.1:6379',
+  // },
   // kafka: {
   //   clientId: process.env.KAFKA_CLIENT || 'localhost:9092',
   //   brokers: process.env.KAFKA_BROKERS || 'localhost:9092',
@@ -27,8 +31,6 @@ const localConfig = {
     poolSize: 50,
   },
   INTERNAL_BASE_URL: 'http://localhost:8000',
-  INTERNAL_BASE_URL_LIVEKIT:
-    'http://penpencil-dev-microservice-lb-162881935.ap-south-1.elb.amazonaws.com/v1/live_kit',
   redis: {
     uri: 'redis://127.0.0.1:6379',
   },

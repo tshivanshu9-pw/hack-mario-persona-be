@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PpLogger } from './boostrap/logger.service';
+import { PpLogger } from './common/logger/logger.service';
 @Injectable()
 export class AppService {
   getHello(logger: PpLogger): string {
