@@ -2,7 +2,7 @@ import { Type } from 'class-transformer';
 import { IsInt, IsOptional, Min } from 'class-validator';
 
 export const DEFAULT__PAGE_LIMIT = 50;
-export const DEFAULT_PAGE = 1;
+export const DEFAULT_PAGE = 0;
 export const DEFAULT_SKIP = 0;
 
 export class PageLimitDto {
@@ -19,5 +19,5 @@ export class PageLimitDto {
   @IsOptional()
   @Type(() => Number)
   @Min(0)
-  skip?: number = DEFAULT_SKIP; //todo:only if page not there
+  skip?: number = DEFAULT_SKIP;
 }
