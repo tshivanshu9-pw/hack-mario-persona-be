@@ -20,9 +20,9 @@ export default () => {
       //   brokers: 'localhost:9092',
       //   groupId: 'test',
       // },
-      logger: {
-        logs: 'error,warn,debug,verbose,log',
-      },
+      // logger: {
+      //   logs: 'error,warn,debug,verbose,log',
+      // },
     };
   else if (process.env.NODE_ENV == 'development')
     return {
@@ -45,8 +45,8 @@ export default () => {
       //   brokers: process.env.KAFKA_BROKERS || 'localhost:9092',
       //   groupId: process.env.KAFKA_GROUP_ID || 'test',
       // },
-      logger: {
-        logs: process.env.LOGS || 'error,warn,debug,verbose,log',
-      },
+      // logger: {
+      //   logs: process.env.LOGS || 'error,warn,debug,verbose,log',
+      // },
     };
 };
