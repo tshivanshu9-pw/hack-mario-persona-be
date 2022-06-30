@@ -48,6 +48,39 @@ export const CustomHeaders = createParamDecorator(
               },
             );
           }
+          if (metaData.name == 'HeaderOrganizationAuthDto') {
+            apiHeaders.push(
+              {
+                name: 'organization_id',
+                description: 'Custom Header: Organization Id',
+                allowEmptyValue: false,
+              },
+              {
+                name: 'authorization',
+                description: 'Custom Header: authorization',
+                allowEmptyValue: false,
+              },
+            );
+          }
+          if (metaData.name == 'HeaderUserOrganizationAuthDto') {
+            apiHeaders.push(
+              {
+                name: 'organization_id',
+                description: 'Custom Header: Organization Id',
+                allowEmptyValue: false,
+              },
+              {
+                name: 'user_id',
+                description: 'Custom Header: User Id',
+                allowEmptyValue: false,
+              },
+              {
+                name: 'authorization',
+                description: 'Custom Header: authorization',
+                allowEmptyValue: false,
+              },
+            );
+          }
         },
       );
       ApiHeaders(apiHeaders)(

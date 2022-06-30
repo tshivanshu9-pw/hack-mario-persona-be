@@ -1,4 +1,4 @@
-import { IsMongoId, IsNotEmpty } from 'class-validator';
+import { IsMongoId, IsNotEmpty, IsString } from 'class-validator';
 import { Types } from 'mongoose';
 export class HeaderUserDto {
   @IsNotEmpty()
@@ -20,4 +20,16 @@ export class HeaderUserOrganizationDto {
   @IsNotEmpty()
   @IsMongoId()
   user_id: Types.ObjectId;
+}
+
+export class HeaderOrganizationAuthDto extends HeaderOrganizationDto {
+  @IsNotEmpty()
+  @IsString()
+  authorization: string;
+}
+
+export class HeaderUserOrganizationAuthDto extends HeaderUserOrganizationDto {
+  @IsNotEmpty()
+  @IsString()
+  authorization: string;
 }
