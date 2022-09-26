@@ -1,14 +1,24 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { MessageGateway } from './dummy-implementations/gateway/message.gateway';
-// import { KafkaModule } from './dummy-implementations/kafka/kafka.module';
-// import { ProducerService } from './dummy-implementations/kafka/producer.service';
-// import { TestConsumer } from './dummy-implementations/kafka/test.consumer';
 import { CoreModule } from './core/core.module';
+import { SaarthiModuleAdmin } from './modules/saarthi/saarthi.module';
+
+const routes = [
+  //admin routes
+  {
+    path: `v1/admin/saarthi/`,
+    children: [
+      {
+        path: '/',
+        module: SaarthiModuleAdmin,
+      },
+    ],
+  },
+];
 
 @Module({
-  imports: [CoreModule],
+  imports: [CoreModule, SaarthiModuleAdmin],
   controllers: [AppController],
   providers: [AppService],
 })
