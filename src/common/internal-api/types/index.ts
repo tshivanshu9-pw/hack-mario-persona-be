@@ -3,6 +3,10 @@ import { IdDetailUrls, VideoUrls } from '../internal-api.urls';
 export type InternalApiIdDetailParams = {
   idName: keyof typeof IdDetailUrls;
   id: string;
+  /**
+   * default true
+   */
+  useCache?: boolean;
 };
 
 export type InternalApiIdDetailsParams = {

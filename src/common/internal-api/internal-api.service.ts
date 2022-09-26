@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+
 import { IdDetailUrls } from './internal-api.urls';
 import { Types } from 'mongoose';
 import {
@@ -7,9 +8,12 @@ import {
   InternalApiIdDetailsParams,
   InternalApiPopulate,
 } from './types/index';
+import { UseCache } from '../decorators/cache.decorator';
 import { PpLoggerService } from 'src/common/logger/logger.service';
+import { ApmSpanAllMethods } from '../decorators/apm.decorator';
 import { HttpUtilService } from '../utils/http-util.service';
 
+@ApmSpanAllMethods()
 @Injectable()
 export class InternalApiService {
   private readonly BASE_URL = '';
@@ -24,6 +28,22 @@ export class InternalApiService {
     this.logger.log('INTERNAL_BASE_URL', this.BASE_URL);
   }
 
+  @UseCache((mapper, searchParams: InternalApiIdDetailParams) => {
+    const { id, idName, useCache = true } = searchParams;
+
+    if (useCache && idName == 'fileId') {
+      return {
+        hKey: mapper.INTERNAL,
+        key: mapper.internalApiIdDetailKey(idName, id.toString()),
+      };
+    }
+    if (useCache && idName == 'userId') {
+      return {
+        key: mapper.internalApiIdDetailKey(idName, id.toString(), true),
+        ttl: 15 * 60,
+      };
+    }
+  })
   async getIdDetail(searchParams: InternalApiIdDetailParams) {
     const { idName, id } = searchParams;
     try {
@@ -40,7 +60,13 @@ export class InternalApiService {
       const data: any = await this.httpUtilService.post(url, body, {});
       return data && Array.isArray(data) ? data[0] : null;
     } catch (error) {
-      this.logger.error('getIdDetail Error', error);
+      this.logger.error(
+        'getIdDetail: ',
+        'arguments: ',
+        JSON.stringify(arguments),
+        'Error: ',
+        JSON.stringify(error),
+      );
       throw error;
     }
   }
@@ -62,7 +88,13 @@ export class InternalApiService {
       const data: any = await this.httpUtilService.post(url, body, {});
       return data && Array.isArray(data) ? data : [];
     } catch (error) {
-      this.logger.error('getIdDetails Error', error);
+      this.logger.error(
+        'getIdDetails: ',
+        'arguments: ',
+        JSON.stringify(arguments),
+        'Error: ',
+        JSON.stringify(error),
+      );
       throw error;
     }
   }

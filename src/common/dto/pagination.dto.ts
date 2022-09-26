@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
-import { IsInt, IsOptional, Min } from 'class-validator';
+import { IsOptional, Min } from 'class-validator';
 
-export const DEFAULT__PAGE_LIMIT = 50;
+export const DEFAULT__PAGE_LIMIT = 10;
 export const DEFAULT_PAGE = 0;
 export const DEFAULT_SKIP = 0;
 

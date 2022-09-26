@@ -37,6 +37,7 @@ Object.freeze(IdDetailUrls);
 const VideoUrls = {
   youtube: '/v1/internal/videos/youtube', //accepts urls
   vimeo: '/v1/internal/videos/vimeo', //accepts urls
+  penpencilvdo: '/v1/internal/videos/penpencil',
 };
 Object.freeze(VideoUrls);
 
@@ -58,7 +59,11 @@ Object.freeze(VideoUrls);
 
 const ConversationUrl = {
   create: '/v1/internal/conversation', //post
-  replaceBulkMembers: '/v1/internal/conversation/replace-members', //put
+  replaceMembers: '/v1/internal/conversation/replace-members', //put
+  blockMember(conversationId: string, userId: string) {
+    return `/v1/conversation/${conversationId}/block-member/${userId}`;
+  },
+  userUnreadConversation: '/v1/internal/conversation/user-unread-conversations', //post
 };
 Object.freeze(ConversationUrl);
 
@@ -68,18 +73,21 @@ const UserUrls = {
   updateUser(id: string) {
     return `/v1/internal/users/${id}/update-user`; //put
   },
+  fetchUser: '/v1/internal/users/fetch-user',
+  fetchFilterUsers: '/v1/internal/users/fetch-filter-user',
 };
-// const OrdersUrls = {
-//   orderAggregate: '/v1/internal/orders/order-details-aggregate', //post,{query}
-// };
-// const BatchStudentsUrls = {
-//   batchStudentsAggregate: '/v1/internal/batch-students/aggregate', //post,{query}
-// };
+const OrdersUrls = {
+  //   orderAggregate: '/v1/internal/orders/order-details-aggregate', //post,{query}
+  // };
+  // const BatchStudentsUrls = {
+  //   batchStudentsAggregate: '/v1/internal/batch-students/aggregate', //post,{query}
+  studentOrderCreate: '/v1/internal/orders/create-order-saarthi',
+};
 
 const FilesUrls = {
   // remoteSaveFile: '/v1/internal/files/remote-save-file', //post,returns {'saved': true, name,key,baseUrl,}
   // createCsvFromArray: '/v1/internal/files/create-csv-from-array', //post,{data,filepath} returns filePath
-  // create: '/v1/internal/files/create', //post {name, key, baseUrl, organization}
+  create: '/v1/internal/files/create', //post {name, key, baseUrl, organization}
   updateRemoteFilebyId(fileId: string) {
     return `/v1/internal/files/update-remote-file/${fileId}`; //put
   },
@@ -93,7 +101,29 @@ const LiveKitUrls = {
   muteTrack: '/admin-room/mute-track',
   muteTrackAll: '/admin-room/mute-all-track',
   updatePermission: '/admin-room/update-permission',
+  getAdminHistory: '/admin-room/admin-history',
+  meetUrl: '/hundredms-admin/meet-url',
 };
+
+const HundredMsUrls = {
+  createRoom: '/hundredms-admin/token-admin',
+  getMappings: '/admin-room/',
+  getUserToken: '/hundredms-admin/get-token',
+  closeRoom: '/hundredms-admin/close-room',
+  checkIsRoomLive(room_name) {
+    return `/hundredms-admin/room/${room_name}/live-check`;
+  },
+  // muteTrack: '/admin-room/mute-track',
+  // muteTrackAll: '/admin-room/mute-all-track',
+  // updatePermission: '/admin-room/update-permission',
+  // getAdminHistory: '/admin-room/admin-history',
+};
+
+const NotificationUrls = {
+  subscribeTopic: '/v1/internal/notification/subscribe-topic', //post
+  unSubscribeTopic: '/v1/internal/notification/unsubscribe-topic/', //post
+};
+
 export {
   IdDetailUrls,
   VideoUrls,
@@ -104,6 +134,8 @@ export {
   // OrdersUrls,
   // BatchStudentsUrls,
   FilesUrls,
-  ConversationUrl,
-  LiveKitUrls,
+  // ConversationUrl,
+  // LiveKitUrls,
+  // HundredMsUrls,
+  // NotificationUrls,
 };

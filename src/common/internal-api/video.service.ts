@@ -1,10 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PpLoggerService } from 'src/common/logger/logger.service';
+import { ApmSpanAllMethods } from '../decorators/apm.decorator';
+import { UseCache } from '../decorators/cache.decorator';
 import { HttpUtilService } from '../utils/http-util.service';
 import { VideoUrls } from './internal-api.urls';
 import { InternalApiVideoDetailParams } from './types';
 
+@ApmSpanAllMethods()
 @Injectable()
 export class VideoService {
   private BASE_URL: string;
@@ -18,6 +21,14 @@ export class VideoService {
     this.BASE_URL = this.configService.get('INTERNAL_BASE_URL');
   }
 
+  @UseCache((mapper, searchParams) => ({
+    hKey: mapper.INTERNAL,
+    key: mapper.getVideoDetailKey(
+      searchParams.organizationId,
+      searchParams.videoType,
+      searchParams.videoUrl,
+    ),
+  }))
   async getVideoDetail(searchParams: InternalApiVideoDetailParams) {
     try {
       const { videoType, videoUrl, organizationId } = searchParams;
@@ -31,7 +42,13 @@ export class VideoService {
       const data = <any>await this.httpUtilService.post(url, body, headers);
       return data && Array.isArray(data) ? data[0] : null;
     } catch (error) {
-      this.logger.error('getVideoDetail: ', ...arguments, error);
+      this.logger.error(
+        'getVideoDetail: ',
+        'arguments: ',
+        JSON.stringify(arguments),
+        'Error: ',
+        JSON.stringify(error),
+      );
       throw error;
     }
   }

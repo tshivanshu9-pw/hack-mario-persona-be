@@ -1,6 +1,6 @@
 import { Types } from 'mongoose';
 
-export type CreateUserData = {
+export interface ICreateUser {
   firstName: string;
   lastName: string;
   primaryNumber: string; //userName
@@ -10,8 +10,8 @@ export type CreateUserData = {
   organization: Types.ObjectId; //as a header
   status: 'Active' | 'Inactive';
   imageId?: Types.ObjectId;
-};
-export type UpdateUserData = {
+}
+export interface IUpdateUser {
   firstName: string;
   lastName: string;
   primaryNumber: string;
@@ -19,4 +19,4 @@ export type UpdateUserData = {
   type: 'ADMIN' | 'TEACHER' | 'PARENT' | 'MENTOR' | 'STUDENT';
   status: 'Active' | 'Inactive';
   imageId?: Types.ObjectId;
-};
+}

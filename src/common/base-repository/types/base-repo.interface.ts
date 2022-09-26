@@ -44,6 +44,35 @@ export interface BaseRepository<T> {
   /**performs aggregation on collection */
   aggregate(pipeline: PipelineStage[]): Promise<any>;
 
+  /**
+   * push cache keys to cachemapping(list)
+   * if "id" is provided this key will delete only when doc with that "id" updated
+   * otherwise this key will delete when any doc related to this model is updated or created
+   */
+  pushToCacheMapping(
+    hKey: string,
+    key: string,
+    orgId?: Types.ObjectId,
+    id?: Types.ObjectId,
+  ): void;
+
+  /**
+   * delete all cache related to given document
+   * this is called when create and findOneAndUpdate is called
+   */
+  deleteDocCache(doc: Document<T>, mode: 'create' | 'update'): void;
+
+  /**
+   * delete all cache related to this model
+   */
+  deleteAllCache(): void;
+
+  /**
+   * delete cache mapping
+   * this is called when create and findOneAndUpdate is called
+   */
+  deleteCacheMapping(orgId?: Types.ObjectId, id?: Types.ObjectId): void;
+
   /**calls logger instance from repository*/
   log(data: any): void;
 }

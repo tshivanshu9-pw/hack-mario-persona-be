@@ -1,42 +1,55 @@
-import { PpContextService } from 'src/core/services/context.service';
-import { CacheMapper } from '../cache/cache.mapper';
 import { CacheService } from '../cache/cache.service';
+import { CacheMapper } from '../cache/cache.mapper';
+import { PpContextService } from 'src/core/services/context.service';
+
+export type TtlCache<T> = {
+  func: (key: string, ttl: number) => Promise<T>;
+  key: string; //if null is provided cache will not be used
+  ttl: number;
+};
+
+export type HkeyCache<T> = {
+  func: (hKey: string, key: string) => Promise<T>;
+  key: string;
+  hKey: string;
+};
+
+export type DeleteKey = { hKey?: string; key?: string | string[] };
 
 export async function useCache<T = any>(
-  getCacheConfig: (mapper: CacheMapper) => {
-    func: (hKey?: string, key?: string, ttl?: number) => Promise<T>;
-    hKey: string;
-    key: string;
-    ttl?: number;
-  },
+  getCacheConfig: (mapper: CacheMapper) => TtlCache<T> | HkeyCache<T>,
 ) {
   const cacheService = PpContextService.context.get(CacheService);
   const cacheMapper = PpContextService.context.get(CacheMapper);
-  const { func, hKey, key, ttl } = getCacheConfig(cacheMapper) || {};
+  const config = getCacheConfig(cacheMapper);
 
   let result: T = null;
-  if (hKey && key) {
+
+  if ((config as HkeyCache<T>).hKey && (config as HkeyCache<T>).key) {
+    const { func, hKey, key } = config as HkeyCache<T>;
     result = await cacheService.hGet(hKey, key);
     if (!result) {
-      result = await func(hKey, key, ttl);
-      if (result) {
-        //set cache without blocking
-        if (ttl) cacheService.hSet(hKey, key, result, ttl);
-        else cacheService.hSet(hKey, key, result);
-      }
+      result = await func(hKey, key);
+      //set cache without blocking
+      if (result) cacheService.hSet(hKey, key, result);
+    }
+  } else if ((config as TtlCache<T>).key && (config as TtlCache<T>).ttl) {
+    const { func, key, ttl } = config as TtlCache<T>;
+    result = await cacheService.get(key);
+    if (!result) {
+      result = await func(key, ttl);
+      //set cache without blocking
+      if (result) cacheService.set(key, result, ttl);
     }
   } else {
-    result = await func();
+    result = await config.func(null, null as never);
   }
+
   return result;
 }
 
 export function deleteCache(
-  getCacheKey: (
-    mapper: CacheMapper,
-  ) =>
-    | { hKey: string; key: string | string[] }
-    | { hKey: string; key: string | string[] }[],
+  getCacheKey: (mapper: CacheMapper) => DeleteKey | DeleteKey[],
 ) {
   const cacheService = PpContextService.context.get(CacheService);
   const cacheMapper = PpContextService.context.get(CacheMapper);
@@ -45,11 +58,17 @@ export function deleteCache(
     //delete cache without blocking
     if (Array.isArray(cacheConfig)) {
       cacheConfig.map(({ hKey, key }) => {
-        cacheService.hDel(hKey, key);
+        if (hKey) {
+          if (key) cacheService.hDel(hKey, key);
+          else cacheService.del(hKey);
+        } else cacheService.del(key);
       });
     } else {
       const { hKey, key } = cacheConfig;
-      cacheService.hDel(hKey, key);
+      if (hKey) {
+        if (key) cacheService.hDel(hKey, key);
+        else cacheService.del(hKey);
+      } else cacheService.del(key);
     }
   }
 }
@@ -58,7 +77,7 @@ export function UseCache(
   getCacheKey: (
     mapper: CacheMapper,
     ...args: any[]
-  ) => { hKey: string; key: string; ttl?: number },
+  ) => { hKey: string; key: string } | { key: string; ttl: number },
 ) {
   return function (
     target: any,
@@ -70,7 +89,7 @@ export function UseCache(
       const method = originalMethod.bind(this);
       return useCache((mapper) => {
         return {
-          func: (hKey, key, ttl) => method(...args),
+          func: (a, b) => method(...args),
           ...getCacheKey(mapper, ...args),
         };
       });
@@ -84,7 +103,9 @@ export function DeleteCache(
     ...args: any[]
   ) =>
     | { hKey: string; key: string | string[] }
-    | { hKey: string; key: string | string[] }[],
+    | { hKey: string; key: string | string[] }[]
+    | { key: string }
+    | { key: string }[],
 ) {
   return function (
     target: any,

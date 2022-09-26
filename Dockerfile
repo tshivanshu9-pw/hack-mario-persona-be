@@ -6,6 +6,7 @@ WORKDIR /usr/src/app
 
 # Copy all Remaining Code/ Add folders like node_modules in .dockerignore
 COPY . .
+COPY .env .env
 
 # Install All Dependencies
 RUN npm install
