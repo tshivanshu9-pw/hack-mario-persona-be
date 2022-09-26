@@ -1,15 +1,9 @@
-# version: "2"
-# services:
-#   nodeserver:
-#     container_name: penpencil-saarthi-service
-#     image: 682917649829.dkr.ecr.ap-south-1.amazonaws.com/penpencil-dev-sarthi-backend-service:latest
-#     build:
-#         context: .
-#     environment:
-#       - PORT=${PORT}
-#       - DEBUGGER_PORT=${DEBUGGER_PORT}
-#       - KAFKA_PORT=${KAFKA_PORT}
-#       - KAFKA_URL=${KAFKA_URL}
-#       - INTERNAL_BASE_URL=${INTERNAL_BASE_URL}
-#       - INTERNAL_BASE_URL_LIVEKIT=${INTERNAL_BASE_URL_LIVEKIT}
-#       - MONGODB_URI=${MONGODB_URI}
+version: '2'
+services:
+  nodeserver:
+    container_name: penpencil-saarthi-service
+    image: 682917649829.dkr.ecr.ap-south-1.amazonaws.com/penpencil-dev-sarthi-backend-service:latest
+    build:
+      context: .
+    environment:
+      - PORT=${PORT}

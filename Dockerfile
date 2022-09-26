@@ -12,7 +12,7 @@ COPY .env .env
 RUN npm install
 
 #Set command to run 
-RUN npm run build
+RUN npm run build:dev
 
 EXPOSE 4000
 
