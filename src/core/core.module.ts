@@ -10,7 +10,7 @@ import { GrpcResponseInterceptor } from 'src/common/interceptors/grpc-response.i
 import { ResponseTransformerInterceptor } from 'src/common/interceptors/http-response.interceptor';
 import { PpLoggerService } from 'src/common/logger/logger.service';
 import { HttpUtilService } from 'src/common/utils/http-util.service';
-import { MongoDBSaarthiConfig } from 'src/config/db.config.service';
+import { MongoDBMarioConfig } from 'src/config/db.config.service';
 import { HttpConfigService } from 'src/config/http.config.service';
 import configuration from '../config/env.config';
 @Global()
@@ -26,8 +26,8 @@ import configuration from '../config/env.config';
       useClass: HttpConfigService,
     }),
     MongooseModule.forRootAsync({
-      useClass: MongoDBSaarthiConfig,
-      connectionName: MongoDBSaarthiConfig.connectionName,
+      useClass: MongoDBMarioConfig,
+      connectionName: MongoDBMarioConfig.connectionName,
     }),
   ],
   providers: [

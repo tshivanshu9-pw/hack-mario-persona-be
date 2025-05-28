@@ -2,23 +2,11 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CoreModule } from './core/core.module';
-import { SaarthiModuleAdmin } from './modules/saarthi/saarthi.module';
-
-const routes = [
-  //admin routes
-  {
-    path: `v1/admin/saarthi/`,
-    children: [
-      {
-        path: '/',
-        module: SaarthiModuleAdmin,
-      },
-    ],
-  },
-];
+import { ContentReportsModule } from './modules/content-reports/content-reports.module';
+import { ContentsModule } from './modules/contents/contents.module';
 
 @Module({
-  imports: [CoreModule, SaarthiModuleAdmin],
+  imports: [CoreModule, ContentReportsModule, ContentsModule],
   controllers: [AppController],
   providers: [AppService],
 })

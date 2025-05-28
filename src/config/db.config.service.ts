@@ -6,14 +6,14 @@ import {
 } from '@nestjs/mongoose';
 
 @Injectable()
-export class MongoDBSaarthiConfig implements MongooseOptionsFactory {
-  static connectionName = 'saarthi';
+export class MongoDBMarioConfig implements MongooseOptionsFactory {
+  static connectionName = 'mariohackathon';
   constructor(private readonly configService: ConfigService) {}
   createMongooseOptions():
     | MongooseModuleOptions
     | Promise<MongooseModuleOptions> {
     return {
-      uri: this.configService.get<string>('database.saarthi'),
+      uri: this.configService.get<string>('database.mariohackathon'),
       // maxPoolSize: 100,
       // minPoolSize: 10,
       // socketTimeoutMS: 3000,

@@ -16,7 +16,7 @@ async function bootstrap() {
     // bufferLogs: true,
   });
 
-  app.setGlobalPrefix('saarthi');
+  app.setGlobalPrefix('mario');
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -27,15 +27,14 @@ async function bootstrap() {
 
   app.useGlobalFilters(app.get(HttpExceptionFilter));
   app.useGlobalInterceptors(app.get(ResponseTransformerInterceptor));
-
   PpContextService.context = app;
   const config = new DocumentBuilder()
-    .setTitle('Saarthi')
-    .setDescription('saarthi')
+    .setTitle('mario')
+    .setDescription('mario')
     .setVersion('1.0')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('/saarthi/api', app, document);
+  SwaggerModule.setup('/mario/api', app, document);
 
   const port = app.get<ConfigService>(ConfigService).get('port') || 3000;
   await app.listen(port);
