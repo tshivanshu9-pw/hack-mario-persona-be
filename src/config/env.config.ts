@@ -15,6 +15,6 @@ export default () => {
         retries: 3,
       },
       log_levels: ['error', 'log', 'warn', 'debug', 'verbose'],
-      openAiApiKey: process.env.OPENAI_API_KEY,
+      openAiApiKey: process.env.OPENAI_API_KEY || 'sk-Bhr4NYtvq9n4EOxlvRgoUQ',
     };
 };
