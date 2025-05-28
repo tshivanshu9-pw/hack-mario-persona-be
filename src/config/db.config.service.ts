@@ -14,9 +14,11 @@ export class MongoDBMarioConfig implements MongooseOptionsFactory {
     | Promise<MongooseModuleOptions> {
     return {
       uri: this.configService.get<string>('database.mariohackathon'),
-      // maxPoolSize: 100,
-      // minPoolSize: 10,
-      // socketTimeoutMS: 3000,
+      retryAttempts: Number.MAX_VALUE,
+      retryDelay: 500,
+      maxPoolSize: 50,
+      minPoolSize: 10,
+      socketTimeoutMS: 45000,
     };
   }
 }
