@@ -18,7 +18,7 @@ export class ContentsService {
 
     ) { 
         this.client = new openai.OpenAI({
-            apiKey: config.get<string>('OPENAI_API_KEY'),
+            apiKey: 'sk-Bhr4NYtvq9n4EOxlvRgoUQ',
             baseURL: 'https://litellm-data.penpencil.co',
         });
     }
