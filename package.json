@@ -7,6 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "start:dev": "nest start --watch",
+    "build": "nest build",
     "start:debug": "cross-env NODE_ENV=local nest start --debug 0.0.0.0:9229 --watch",
     "prebuild": "rimraf dist",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
