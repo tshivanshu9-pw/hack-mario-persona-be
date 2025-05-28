@@ -26,7 +26,7 @@ export class ContentsService {
     async generateContent(body: GenerateContentDto): Promise<Types.ObjectId> {
         const {userId, title, tags} = body;
         const id = new Types.ObjectId();
-        process.nextTick(async () => {
+        // process.nextTick(async () => {
         const messages = [
             {
                 role: 'user',
@@ -71,7 +71,7 @@ export class ContentsService {
             dbResponse: res,
             openAIResponse: response,
         });
-    });
+    // });
         return id;
     }
 
