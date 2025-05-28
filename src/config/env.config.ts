@@ -3,7 +3,7 @@ export default () => {
       port: parseInt(process.env.PORT) || 4000,
       database: {
         mariohackathon:
-          'mongodb+srv://upgrade@upgrade-activity.sg4ju.mongodb.net/mario-hackathon',
+          'mongodb+srv://biswa:xfact@cluster0.xsrl7bt.mongodb.net/mario-hackathon',
       },
       INTERNAL_BASE_URL: 'https://dev-api.penpencil.co',
       http: {
