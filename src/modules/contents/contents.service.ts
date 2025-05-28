@@ -28,7 +28,7 @@ export class ContentsService {
     async generateContent(body: GenerateContentDto): Promise<Types.ObjectId> {
         const {userId, title, tags} = body;
         const id = new Types.ObjectId();
-        // process.nextTick(async () => {
+        process.nextTick(async () => {
         const messages = [
             {
                 role: 'user',
@@ -62,18 +62,18 @@ export class ContentsService {
         });
 
         // Push data into content report
-        const res = await this.contentReportService.create({
+        await this.contentReportService.create({
             contentId: newContent._id,
             userId,
             updatedAt: new Date(),
         });
 
-        console.log({
-            message: 'Content generated successfully',
-            dbResponse: res,
-            openAIResponse: response,
-        });
-    // });
+        // console.log({
+        //     message: 'Content generated successfully',
+        //     dbResponse: res,
+        //     openAIResponse: response,
+        // });
+    });
         return id;
     }
 
