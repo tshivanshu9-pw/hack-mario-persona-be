@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Content } from './schema/contents.schema';
 import { BaseRepository } from 'src/common/base-repository/types/base-repo.interface';
-import {Types} from 'mongoose';
+import { Types } from 'mongoose';
 import { ContentReportsService } from '../content-reports/content-reports.service';
-import openai from 'openai';
+import { OpenAI } from 'openai';
 import { ConfigService } from '@nestjs/config';
 import { GenerateContentDto } from './dto/contents.dto';
 
@@ -17,9 +17,11 @@ export class ContentsService {
         private config: ConfigService,
 
     ) { 
-        this.client = new openai.OpenAI({
-            apiKey: 'sk-Bhr4NYtvq9n4EOxlvRgoUQ',
-            baseURL: 'https://litellm-data.penpencil.co',
+        this.client = new OpenAI({
+            apiKey: '304502f4c76949c084c41590b0ef4ee1',
+            baseURL: 'https://alakhaieastus2.openai.azure.com/openai/deployments/gpt-4.1',
+            defaultQuery: { 'api-version': '2025-01-01-preview' },
+            defaultHeaders: { 'api-key': '304502f4c76949c084c41590b0ef4ee1' },
         });
     }
 
