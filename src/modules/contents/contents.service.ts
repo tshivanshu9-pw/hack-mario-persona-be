@@ -5,6 +5,7 @@ import {Types} from 'mongoose';
 import { ContentReportsService } from '../content-reports/content-reports.service';
 import openai from 'openai';
 import { ConfigService } from '@nestjs/config';
+import { GenerateContentDto } from './dto/contents.dto';
 
 @Injectable()
 export class ContentsService {
@@ -18,20 +19,24 @@ export class ContentsService {
     ) { 
         this.client = new openai.OpenAI({
             apiKey: config.get<string>('OPENAI_API_KEY'),
-            baseURL: 'http://0.0.0.0:4000',
+            baseURL: 'https://litellm-data.penpencil.co',
         });
     }
 
-    async generateContent(userId: Types.ObjectId, title: string, tags: string[]): Promise<Content> {
+    async generateContent(body: GenerateContentDto): Promise<Types.ObjectId> {
+        const {userId, title, tags} = body;
+        const id = new Types.ObjectId();
+        process.nextTick(async () => {
         const messages = [
             {
                 role: 'user',
                 content: `Generate a detailed article with the title "${title}" and include the following tags: ${tags.join(', ')}.`,
             },
         ];
+        
         const response = await this.client.chat.completions.create(
             {
-                model: 'gpt-3.5-turbo',
+                model: 'gpt-4.1',
                 messages,
             },
             // {
@@ -45,6 +50,7 @@ export class ContentsService {
         // Extract generated content
         const generatedBody = response.choices[0].message.content;
         const newContent = await this.contentsRepo.create({
+            _id: id,
             userId,
             title,
             body: generatedBody.trim(),
@@ -59,7 +65,11 @@ export class ContentsService {
             userId,
             updatedAt: new Date(),
         });
+    });
+        return id;
+    }
 
-        return newContent;
+    async getContentById(id: Types.ObjectId): Promise<Content> {
+        return this.contentsRepo.fetchOne({searchParams:{ _id: id }});
     }
 }

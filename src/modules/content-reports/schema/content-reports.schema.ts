@@ -7,7 +7,7 @@ export class ContentReports {
   @Prop({ type: SchemaTypes.ObjectId, required: true })
   contentId: Types.ObjectId;
 
-  @Prop({ type: SchemaTypes.ObjectId, required: true })
+  @Prop({ type: SchemaTypes.ObjectId })
   userId: Types.ObjectId;
 
   @Prop({ type: Number })

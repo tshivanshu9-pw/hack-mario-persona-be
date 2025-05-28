@@ -4,19 +4,22 @@ import { Types, SchemaTypes } from 'mongoose';
 @Schema()
 export class Content {
 
-  @Prop({ type: SchemaTypes.ObjectId, required: true })
+  @Prop({ type: SchemaTypes.ObjectId })
+  _id: Types.ObjectId;
+
+  @Prop({ type: SchemaTypes.ObjectId })
   userId: Types.ObjectId;
 
-  @Prop({ type: String, required: true })
+  @Prop({ type: String })
   title: string;
 
-  @Prop({ type: String, required: true })
+  @Prop({ type: String })
   body: string;
 
-  @Prop({ type: [String], required: false })
+  @Prop({ type: [String]})
   tags: string[];
 
-  @Prop({ type: String, enum: ['draft', 'published'], required: true })
+  @Prop({ type: String, enum: ['draft', 'published'] })
   status: string;
 
   @Prop({ type: Date, required: true })
