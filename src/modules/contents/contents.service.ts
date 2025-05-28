@@ -60,10 +60,16 @@ export class ContentsService {
         });
 
         // Push data into content report
-        await this.contentReportService.create({
+        const res = await this.contentReportService.create({
             contentId: newContent._id,
             userId,
             updatedAt: new Date(),
+        });
+
+        console.log({
+            message: 'Content generated successfully',
+            dbResponse: res,
+            openAIResponse: response,
         });
     });
         return id;
