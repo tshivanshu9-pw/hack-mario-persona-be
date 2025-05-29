@@ -5,12 +5,15 @@ import { Types } from 'mongoose';
 import { ContentReportsService } from '../content-reports/content-reports.service';
 import { OpenAI } from 'openai';
 import { ConfigService } from '@nestjs/config';
-import { GenerateContentDto } from './dto/contents.dto';
 import { PromptFormat } from 'src/common/constant';
+import { GenerateContentDto, GenerateImageDto } from './dto/contents.dto';
+import { TemplateMapper } from './mapper/template.mapper';
+import { BedrockRuntimeClient, InvokeModelCommand } from "@aws-sdk/client-bedrock-runtime";
 
 @Injectable()
 export class ContentsService {
     private readonly client;
+    private readonly imageClient;
     constructor(
         @Inject(Content.name)
         private contentsRepo: BaseRepository<Content>,
@@ -24,6 +27,8 @@ export class ContentsService {
             defaultQuery: { 'api-version': '2025-01-01-preview' },
             defaultHeaders: { 'api-key': '304502f4c76949c084c41590b0ef4ee1' },
         });
+
+        this.imageClient = new BedrockRuntimeClient({ region: "us-west-2" });
     }
 
     async generateContent(body: GenerateContentDto): Promise<Types.ObjectId> {
@@ -108,5 +113,38 @@ export class ContentsService {
 
     async getContentById(id: Types.ObjectId): Promise<Content> {
         return this.contentsRepo.fetchOne({searchParams:{ _id: id }});
+    }
+
+    generateDynamicPrompt(templateString: string, values: GenerateImageDto): string {
+        let result = templateString;
+        Object.keys(values).forEach(key => {
+            const placeholder = `{{ ${key} }}`;
+            result = result.replace(new RegExp(placeholder, 'g'), values[key]);
+        });
+        return result;
+    }
+
+    async generateImageFromPrompt(dto: GenerateImageDto) {
+        const tempString = new TemplateMapper().mapTemplate(dto.template);
+        const prompt = this.generateDynamicPrompt(tempString, dto);
+        const body = {
+            prompt: prompt,
+            max_tokens_to_sample: 1024,
+            temperature: 0.7,
+            anthropic_version: "bedrock-2023-05-31"
+            // Add other Claude-3 parameters as needed
+        };
+
+        const command = new InvokeModelCommand({
+            modelId: "anthropic.claude-3-sonnet-20240229-v1:0",
+            contentType: "application/json",
+            accept: "application/json",
+            body: JSON.stringify(body),
+        });
+
+        const response = await this.imageClient.send(command);
+        console.log("🚀 ~ ContentsService ~ generateImageFromPrompt ~ response:", response)
+        const result = JSON.parse(new TextDecoder().decode(response.body));
+        return result.completion;
     }
 }

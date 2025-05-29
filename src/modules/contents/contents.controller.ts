@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ContentsService } from './contents.service';
 import { Types } from 'mongoose';
-import { GenerateContentDto, IdDto } from './dto/contents.dto';
+import { GenerateContentDto, GenerateImageDto, IdDto } from './dto/contents.dto';
 
 @Controller('contents')
 export class ContentsController {
@@ -18,5 +18,10 @@ export class ContentsController {
     @Get(':id')
     async getContentById(@Param() Param: IdDto) {
         return this.contentsService.getContentById(Param.id);
+    }
+
+    @Post('generate-image')
+    async generateImage(@Body() dto: GenerateImageDto) {
+        return this.contentsService.generateImageFromPrompt(dto);
     }
 }
