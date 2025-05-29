@@ -5,6 +5,7 @@ import { RepositoryModule } from 'src/common/base-repository/base-repository.mod
 import { Content, ContentSchema } from './schema/contents.schema';
 import { MongoDBMarioConfig } from 'src/config/db.config.service';
 import { ContentReportsModule } from '../content-reports/content-reports.module';
+import { InternalApiModule } from 'src/common/internal-api/internal-api.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { ContentReportsModule } from '../content-reports/content-reports.module'
         MongoDBMarioConfig.connectionName,
       ),
       ContentReportsModule,
+      InternalApiModule,
     ],
   controllers: [ContentsController],
   providers: [ContentsService]

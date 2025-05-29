@@ -12,6 +12,8 @@ import { UseCache } from '../decorators/cache.decorator';
 import { PpLoggerService } from 'src/common/logger/logger.service';
 import { ApmSpanAllMethods } from '../decorators/apm.decorator';
 import { HttpUtilService } from '../utils/http-util.service';
+import * as fs from 'fs';
+import * as FormData from 'form-data';
 
 @ApmSpanAllMethods()
 @Injectable()
@@ -222,5 +224,24 @@ export class InternalApiService {
       }
     }
     return doc;
+  }
+
+  async getFileS3Url(
+    filePath: string,
+  ): Promise<any> {
+    try {
+      const form = new FormData();
+      form.append('file', fs.createReadStream(filePath));
+      const url = 'https://stage-api.penpencil.co/v1/internal/files/upload-file'
+      const response = (await this.httpUtilService.post(url, form, {
+        organizationId: new Types.ObjectId(),
+        ...form.getHeaders(),
+      })) as Promise<any>;
+      fs.unlinkSync(filePath); //delete file after upload
+      return response;
+    } catch (error) {
+      this.logger.error(JSON.stringify(error));
+      throw error;
+    }
   }
 }

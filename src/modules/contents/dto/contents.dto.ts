@@ -22,7 +22,7 @@ export class IdDto {
     id: Types.ObjectId;
 }
 
-export class GenerateImageDto {
+export class TagImageDto {
   @IsOptional()
   header_1: string;
 
@@ -40,4 +40,18 @@ export class GenerateImageDto {
 
   @IsNotEmpty()
   template: string;
+}
+
+export class GenerateImageDto {
+  @IsNotEmpty()
+  body: string;
+  
+  @IsOptional()
+  tags?: TagImageDto[];
+
+  @IsOptional()
+  title?: string;
+
+  @IsOptional()
+  userId?: Types.ObjectId;
 }

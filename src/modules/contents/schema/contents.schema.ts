@@ -27,6 +27,9 @@ export class Content {
 
   @Prop({ type: Date, required: false })
   updatedAt?: Date;
+
+  @Prop({ type: String, required: false })
+  imageUrl?: string;
 }
 
 export const ContentSchema = SchemaFactory.createForClass(Content);

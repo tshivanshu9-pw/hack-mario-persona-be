@@ -7,8 +7,10 @@ import { OpenAI } from 'openai';
 import { ConfigService } from '@nestjs/config';
 import { PromptFormat } from 'src/common/constant';
 import { GenerateContentDto, GenerateImageDto } from './dto/contents.dto';
-import { TemplateMapper } from './mapper/template.mapper';
 import { BedrockRuntimeClient, InvokeModelCommand } from "@aws-sdk/client-bedrock-runtime";
+import * as fs from 'fs';
+import * as path from 'path';
+import { InternalApiService } from 'src/common/internal-api/internal-api.service';
 
 @Injectable()
 export class ContentsService {
@@ -19,6 +21,7 @@ export class ContentsService {
         private contentsRepo: BaseRepository<Content>,
         private contentReportService: ContentReportsService,
         private config: ConfigService,
+        private readonly internalApiService: InternalApiService, // Assuming you have this service for S3 uploads
 
     ) { 
         this.client = new OpenAI({
@@ -31,8 +34,9 @@ export class ContentsService {
         this.imageClient = new BedrockRuntimeClient({ 
             region: "us-west-2",
             credentials: {
-                accessKeyId: "ASIAR4QWW5GI7LO6ZOCE",
-                secretAccessKey: "KAVCBRC5b7ngNmUDkdbbZiMbpZ8/sXuL5tDRMHrE",
+                accessKeyId: this.config.get("accessKeyId"),
+                secretAccessKey: this.config.get("secretAccessKey"),
+                sessionToken: this.config.get("sessionToken")
             },
         });
     }
@@ -121,33 +125,14 @@ export class ContentsService {
         return this.contentsRepo.fetchOne({searchParams:{ _id: id }});
     }
 
-    generateDynamicPrompt(templateString: string, values: GenerateImageDto): string {
-        let result = templateString;
-        Object.keys(values).forEach(key => {
-            const placeholder = `{{ ${key} }}`;
-            result = result.replace(new RegExp(placeholder, 'g'), values[key]);
-        });
-        return result;
-    }
-
     async generateImageFromPrompt(dto: GenerateImageDto) {
-        const tempString = new TemplateMapper().mapTemplate(dto.template);
-        const prompt = this.generateDynamicPrompt(tempString, dto);
-        // const body = {
-        //     prompt: prompt,
-        //     max_tokens_to_sample: 1024,
-        //     temperature: 0.7,
-        //     anthropic_version: "bedrock-2023-05-31"
-        //     // Add other Claude-3 parameters as needed
-        // };
-
         const command = new InvokeModelCommand({
             contentType: "application/json",
-            accept: "*/*",
+            "accept": "application/json",
             modelId: "amazon.titan-image-generator-v2:0",
             body: JSON.stringify({
                 taskType: "TEXT_IMAGE",
-                textToImageParams: { text: prompt },
+                textToImageParams: { text: dto.body },
                 imageGenerationConfig: {
                     numberOfImages: 1,
                     quality: "standard",
@@ -167,9 +152,48 @@ export class ContentsService {
             const parsedData = JSON.parse(jsonString);
             const image = parsedData.images[0];
 
-            return { image: image };
+            const filePath = await this.decodeAndSaveImage(image);
+    
+            const resp = await this.internalApiService.getFileS3Url(filePath);
+            const newContent = await this.contentsRepo.create({
+                _id: new Types.ObjectId(),
+                title: dto.title,
+                body: dto.body,
+                tags: dto.tags,
+                createdAt: new Date(),
+                userId: dto.userId,
+                status: 'draft',
+                imageUrl: resp?.baseUrl + resp?.key,
+            });
+
+            // Push data into content report
+            await this.contentReportService.create({
+                contentId: newContent._id,
+                userId: dto.userId,
+                updatedAt: new Date(),
+            });
+            return resp;
         } else {
             throw new Error(`Error generating image: ${$metadata.httpStatusCode}`);
+        }
+    }
+
+    async decodeAndSaveImage(base64Image: string, fileName = 'output.png'): Promise<string> {
+        try {
+            const buffer = Buffer.from(base64Image, 'base64');
+
+            const filePath = path.join('src/common', '..', 'images', fileName);
+
+            // Make sure the 'images' folder exists
+            fs.mkdirSync(path.dirname(filePath), { recursive: true });
+
+            fs.writeFileSync(filePath, buffer);
+
+            console.log(`✅ Image saved to ${filePath}`);
+            return filePath;
+        } catch (err) {
+            console.error('❌ Error saving image:', err);
+            throw err;
         }
     }
 }
