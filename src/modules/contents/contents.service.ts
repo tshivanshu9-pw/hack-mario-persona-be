@@ -9,6 +9,7 @@ import { PromptFormat } from 'src/common/constant';
 import { GenerateContentDto, GenerateImageDto } from './dto/contents.dto';
 import { TemplateMapper } from './mapper/template.mapper';
 import { BedrockRuntimeClient, InvokeModelCommand } from "@aws-sdk/client-bedrock-runtime";
+import { fromIni } from "@aws-sdk/credential-providers";
 
 @Injectable()
 export class ContentsService {
@@ -28,7 +29,10 @@ export class ContentsService {
             defaultHeaders: { 'api-key': '304502f4c76949c084c41590b0ef4ee1' },
         });
 
-        this.imageClient = new BedrockRuntimeClient({ region: "us-west-2" });
+        this.imageClient = new BedrockRuntimeClient({ 
+            region: "us-west-2",
+            credentials: fromIni({ profile: 'default' }),
+        });
     }
 
     async generateContent(body: GenerateContentDto): Promise<Types.ObjectId> {
