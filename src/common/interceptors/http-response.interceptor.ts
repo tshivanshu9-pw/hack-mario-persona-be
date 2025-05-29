@@ -36,13 +36,13 @@ export class ResponseTransformerInterceptor implements NestInterceptor {
           responseData.data = data.data;
           responseData['paginate'] = data.paginate;
         }
-        this.logger.log(
-          `Response: ${JSON.stringify(responseData)}, \nPath: ${
-            request.path
-          }, \nMethod: ${request.method}}, \nProcessTime: ${(
-            performance.now() - now
-          ).toFixed(4)} ms`,
-        );
+        // this.logger.log(
+        //   `Response: ${JSON.stringify(responseData)}, \nPath: ${
+        //     request.path
+        //   }, \nMethod: ${request.method}}, \nProcessTime: ${(
+        //     performance.now() - now
+        //   ).toFixed(4)} ms`,
+        // );
         span?.end();
         return responseData;
       }),

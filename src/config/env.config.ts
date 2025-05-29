@@ -1,27 +1,9 @@
 export default () => {
-  if (process.env.NODE_ENV == 'local') {
     return {
       port: parseInt(process.env.PORT) || 4000,
       database: {
-        saarthi: 'mongodb://localhost:27017/saarthi_service',
-      },
-      INTERNAL_BASE_URL: 'http://localhost:8000',
-      http: {
-        timeout: 10000,
-        maxRedirects: 5,
-      },
-      redis: {
-        url: 'redis://127.0.0.1:6379',
-        retries: 5,
-      },
-      log_levels: ['error', 'log', 'warn', 'debug', 'verbose'],
-    };
-  } else if (process.env.NODE_ENV == 'develop') {
-    return {
-      port: parseInt(process.env.PORT) || 4000,
-      database: {
-        saarthi:
-          'mongodb+srv://penpencil_local:wDPS8evNoisUYeJJ@penpencil-dev.dwter.mongodb.net/saarthi_service_staging?retryWrites=false&w=majority',
+        mariohackathon:
+          'mongodb+srv://biswa:xfact@cluster0.xsrl7bt.mongodb.net/mario-hackathon',
       },
       INTERNAL_BASE_URL: 'https://dev-api.penpencil.co',
       http: {
@@ -33,8 +15,6 @@ export default () => {
         retries: 3,
       },
       log_levels: ['error', 'log', 'warn', 'debug', 'verbose'],
+      openAiApiKey: process.env.OPENAI_API_KEY || 'sk-Bhr4NYtvq9n4EOxlvRgoUQ',
     };
-  } else if (process.env.NODE_ENV == 'stage') {
-  } else if (process.env.NODE_ENV == 'production') {
-  }
 };

@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { Document } from 'src/common/base-repository/types/document.interface';
 import { IdDetailUrls } from 'src/common/internal-api/internal-api.urls';
 import { Types } from 'mongoose';
-import { Saarthi } from 'src/modules/saarthi/schema/saarthi.schema';
 import { deleteCache, DeleteKey } from 'src/common/decorators/cache.decorator';
 
 @Injectable()
@@ -73,18 +72,6 @@ export class CacheMapper {
   onDocumentUpdate(modelName: string, doc: any, mode: 'create' | 'update') {
     modelName = modelName.toUpperCase();
     const keys: DeleteKey[] = [];
-
-    //keys related to saarthi document
-    if (modelName == this.SAARTHI) {
-      const saarthiDoc = doc as Document<Saarthi>;
-      keys.push({
-        hKey: modelName,
-        key: [
-          // this.groupSaarthiByExamKey(saarthiDoc.organization_id),
-          // this.getSaarthiDetailsByExamKey(),//right now uses cache mapping
-        ],
-      });
-    }
 
     if (mode == 'update') {
       keys.push(
