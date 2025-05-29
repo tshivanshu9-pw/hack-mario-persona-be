@@ -11,17 +11,18 @@ import { BedrockRuntimeClient, InvokeModelCommand } from "@aws-sdk/client-bedroc
 import * as fs from 'fs';
 import * as path from 'path';
 import { InternalApiService } from 'src/common/internal-api/internal-api.service';
+import { CredService } from '../cred/cred.service';
 
 @Injectable()
 export class ContentsService {
     private readonly client;
-    private readonly imageClient;
     constructor(
         @Inject(Content.name)
         private contentsRepo: BaseRepository<Content>,
         private contentReportService: ContentReportsService,
         private config: ConfigService,
         private readonly internalApiService: InternalApiService, // Assuming you have this service for S3 uploads
+        private readonly credService: CredService,
 
     ) { 
         this.client = new OpenAI({
@@ -31,14 +32,14 @@ export class ContentsService {
             defaultHeaders: { 'api-key': '304502f4c76949c084c41590b0ef4ee1' },
         });
 
-        this.imageClient = new BedrockRuntimeClient({ 
-            region: "us-west-2",
-            credentials: {
-                accessKeyId: this.config.get("accessKeyId"),
-                secretAccessKey: this.config.get("secretAccessKey"),
-                sessionToken: this.config.get("sessionToken")
-            },
-        });
+        // this.imageClient = new BedrockRuntimeClient({ 
+        //     region: "us-west-2",
+        //     credentials: {
+        //         accessKeyId: this.config.get("accessKeyId"),
+        //         secretAccessKey: this.config.get("secretAccessKey"),
+        //         sessionToken: this.config.get("sessionToken")
+        //     },
+        // });
     }
 
     async generateContent(body: GenerateContentDto): Promise<Types.ObjectId> {
@@ -143,7 +144,8 @@ export class ContentsService {
                 },
             })
         });
-        const response = await this.imageClient.send(command);
+        const imageClient: any = await this.initializeImageClient();
+        const response = await imageClient.send(command);
         const { body, $metadata } = response;
 
         if ($metadata.httpStatusCode === 200) {
@@ -195,5 +197,17 @@ export class ContentsService {
             console.error('❌ Error saving image:', err);
             throw err;
         }
+    }
+
+    async initializeImageClient() {
+        const credentials: any = await this.credService.fetchOne({ searchParams: { type: 'AWS' } }); // Fetch credentials for AWS from credService
+        return new BedrockRuntimeClient({
+            region: "us-west-2",
+            credentials: {
+                accessKeyId: credentials.accessKeyId, // Use the fetched accessKeyId
+                secretAccessKey: credentials.secretAccessKey, // Use the fetched secretAccessKey
+                sessionToken: credentials.sessionToken, // Use the fetched sessionToken (if available)
+            },
+        });
     }
 }

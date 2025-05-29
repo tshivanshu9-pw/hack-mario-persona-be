@@ -6,6 +6,7 @@ import { Content, ContentSchema } from './schema/contents.schema';
 import { MongoDBMarioConfig } from 'src/config/db.config.service';
 import { ContentReportsModule } from '../content-reports/content-reports.module';
 import { InternalApiModule } from 'src/common/internal-api/internal-api.module';
+import { CredModule } from '../cred/cred.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { InternalApiModule } from 'src/common/internal-api/internal-api.module';
       ),
       ContentReportsModule,
       InternalApiModule,
+      CredModule,
     ],
   controllers: [ContentsController],
   providers: [ContentsService]
