@@ -6,6 +6,7 @@ import { ContentReportsService } from '../content-reports/content-reports.servic
 import { OpenAI } from 'openai';
 import { ConfigService } from '@nestjs/config';
 import { GenerateContentDto } from './dto/contents.dto';
+import { PromptFormat } from 'src/common/constant';
 
 @Injectable()
 export class ContentsService {
@@ -28,13 +29,41 @@ export class ContentsService {
     async generateContent(body: GenerateContentDto): Promise<Types.ObjectId> {
         const {userId, title, tags} = body;
         const id = new Types.ObjectId();
+        const generateDynamicPrompt = (tags: any[]): string => {
+            let dynamicPrompt = PromptFormat;
+    
+            // Loop through each tag object in the tags array
+            tags.forEach((tag) => {
+                Object.keys(tag).forEach((key) => {
+                    // Construct the placeholder format
+                    const placeholder = `{{ ${key} }}`;
+    
+                    // Replace the placeholder with the actual value
+                    if (dynamicPrompt.includes(placeholder)) {
+                        dynamicPrompt = dynamicPrompt.replace(new RegExp(placeholder, 'g'), tag[key]);
+                    }
+                });
+            });
+    
+            return dynamicPrompt;
+        };
+        
         process.nextTick(async () => {
         const messages = [
             {
-                role: 'user',
-                content: `Generate a detailed article with the title "${title}" and include the following tags: ${JSON.stringify(tags)}.`,
+                role: 'system',
+                content: 'You are a creative copywriter at a leading Indian EdTech company'
             },
+            {
+                role: 'user',
+                content: generateDynamicPrompt(tags),
+            },
+            // {
+            //     role: 'system',
+            //     content: PromptFormat,
+            // }
         ];
+        
         
         const response = await this.client.chat.completions.create(
             {
