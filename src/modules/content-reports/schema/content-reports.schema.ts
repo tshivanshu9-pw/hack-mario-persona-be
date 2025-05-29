@@ -27,3 +27,4 @@ export class ContentReports {
 }
 
 export const ContentReportsSchema = SchemaFactory.createForClass(ContentReports);
+ContentReportsSchema.index({ updatedAt: 1 });
