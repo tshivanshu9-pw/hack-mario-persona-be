@@ -29,14 +29,19 @@ async function bootstrap() {
   app.useGlobalInterceptors(app.get(ResponseTransformerInterceptor));
   PpContextService.context = app;
   const config = new DocumentBuilder()
-    .setTitle('mario')
-    .setDescription('mario')
-    .setVersion('1.0')
-    .build();
+  .setTitle('mario')
+  .setDescription('mario')
+  .setVersion('1.0')
+  .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('/mario/api', app, document);
-
+  
   const port = app.get<ConfigService>(ConfigService).get('port') || 3000;
+  app.enableCors({
+    origin: '*', // Allow all origins (use specific origins in production for security)
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Allowed HTTP methods
+    credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+  });
   await app.listen(port);
 
   console.log(`App listening on port ${port}`);
