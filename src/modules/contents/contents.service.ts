@@ -9,7 +9,6 @@ import { PromptFormat } from 'src/common/constant';
 import { GenerateContentDto, GenerateImageDto } from './dto/contents.dto';
 import { TemplateMapper } from './mapper/template.mapper';
 import { BedrockRuntimeClient, InvokeModelCommand } from "@aws-sdk/client-bedrock-runtime";
-import { fromIni } from "@aws-sdk/credential-providers";
 
 @Injectable()
 export class ContentsService {
@@ -31,7 +30,10 @@ export class ContentsService {
 
         this.imageClient = new BedrockRuntimeClient({ 
             region: "us-west-2",
-            credentials: fromIni({ profile: 'default' }),
+            credentials: {
+                accessKeyId: "ASIAR4QWW5GI7LO6ZOCE",
+                secretAccessKey: "KAVCBRC5b7ngNmUDkdbbZiMbpZ8/sXuL5tDRMHrE",
+            },
         });
     }
 
@@ -131,24 +133,43 @@ export class ContentsService {
     async generateImageFromPrompt(dto: GenerateImageDto) {
         const tempString = new TemplateMapper().mapTemplate(dto.template);
         const prompt = this.generateDynamicPrompt(tempString, dto);
-        const body = {
-            prompt: prompt,
-            max_tokens_to_sample: 1024,
-            temperature: 0.7,
-            anthropic_version: "bedrock-2023-05-31"
-            // Add other Claude-3 parameters as needed
-        };
+        // const body = {
+        //     prompt: prompt,
+        //     max_tokens_to_sample: 1024,
+        //     temperature: 0.7,
+        //     anthropic_version: "bedrock-2023-05-31"
+        //     // Add other Claude-3 parameters as needed
+        // };
 
         const command = new InvokeModelCommand({
-            modelId: "anthropic.claude-3-sonnet-20240229-v1:0",
             contentType: "application/json",
-            accept: "application/json",
-            body: JSON.stringify(body),
+            accept: "*/*",
+            modelId: "amazon.titan-image-generator-v2:0",
+            body: JSON.stringify({
+                taskType: "TEXT_IMAGE",
+                textToImageParams: { text: prompt },
+                imageGenerationConfig: {
+                    numberOfImages: 1,
+                    quality: "standard",
+                    cfgScale: 8.0,
+                    height: 512,
+                    width: 512,
+                    seed: 0,
+                },
+            })
         });
-
         const response = await this.imageClient.send(command);
-        console.log("🚀 ~ ContentsService ~ generateImageFromPrompt ~ response:", response)
-        const result = JSON.parse(new TextDecoder().decode(response.body));
-        return result.completion;
+        const { body, $metadata } = response;
+
+        if ($metadata.httpStatusCode === 200) {
+            const textDecoder = new TextDecoder("utf-8");
+            const jsonString = textDecoder.decode(body.buffer);
+            const parsedData = JSON.parse(jsonString);
+            const image = parsedData.images[0];
+
+            return { image: image };
+        } else {
+            throw new Error(`Error generating image: ${$metadata.httpStatusCode}`);
+        }
     }
 }
