@@ -14,7 +14,7 @@ export class GenerateContentDto {
 
     @IsOptional()
     @IsArray()
-    tags: string[];
+    tags: any[];
 }
 
 export class IdDto {

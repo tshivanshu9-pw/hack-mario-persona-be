@@ -16,8 +16,8 @@ export class Content {
   @Prop({ type: String })
   body: string;
 
-  @Prop({ type: [String]})
-  tags: string[];
+  @Prop({ type: [SchemaTypes.Mixed]})
+  tags: any[];
 
   @Prop({ type: String, enum: ['draft', 'published'] })
   status: string;
