@@ -21,7 +21,7 @@ export class CacheService {
     private configService: ConfigService,
   ) {
     this.logger.setContext(CacheService.name);
-    this.connect();
+    // this.connect();
   }
 
   private async connect() {

@@ -32,7 +32,7 @@ export class ContentsService {
         const messages = [
             {
                 role: 'user',
-                content: `Generate a detailed article with the title "${title}" and include the following tags: ${tags.join(', ')}.`,
+                content: `Generate a detailed article with the title "${title}" and include the following tags: ${JSON.stringify(tags)}.`,
             },
         ];
         
