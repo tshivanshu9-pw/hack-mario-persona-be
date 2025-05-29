@@ -19,9 +19,10 @@ export class ContentReportsService {
         return this.contentReportsRepo.findOneAndUpdate({_id: id}, data);
     }
 
-    async getGenerationTrends(days: number = 7): Promise<{ date: string, count: number }[]> {
+    async getGenerationTrends(days: number = 7): Promise<{ date: string, count: number, deltaPercent?: number }[]> {
         const since = new Date();
-        since.setDate(since.getDate() - days + 1);
+        since.setHours(0, 0, 0, 0);
+        since.setDate(since.getDate() - (days - 1));
 
         const pipeline: PipelineStage[] = [
             { $match: { updatedAt: { $gte: since } } },
@@ -34,9 +35,19 @@ export class ContentReportsService {
             { $sort: { _id: 1 } }
         ];
 
-        return this.contentReportsRepo.aggregate(pipeline).then(results =>
-            results.map(r => ({ date: r._id, count: r.count }))
-        );
+        const results = await this.contentReportsRepo.aggregate(pipeline);
+        const trends = results.map(r => ({ date: r._id, count: r.count }));
+
+        for (let i = 1; i < trends.length; i++) {
+            const prev = trends[i - 1].count;
+            const curr = trends[i].count;
+            trends[i].deltaPercent = prev === 0 ? null : Number((((curr - prev) / prev) * 100).toFixed(2));
+        }
+        if (trends.length > 0) {
+            trends[0].deltaPercent = 0;
+        }
+
+        return trends;
     }
 
     async getTotalGeneratedContents(): Promise<number> {
